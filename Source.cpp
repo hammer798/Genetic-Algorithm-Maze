@@ -2,15 +2,17 @@
 #include <time.h>;
 using namespace std;
 
+//constants
 #define CROSSOVER .2
 #define MUTATE .001
 #define POP_SIZE 100
 #define INSTRUCT_LEN 20
 #define MAX_ALLOWABLE_GENS 50
 
+//random number macro
 #define RANDOM_NUM ((float)rand()/(RAND_MAX+1))
 
-
+//basic chromosome struct
 struct chromosome_typ {
 	char* instructions;
 	int fitness;
@@ -32,6 +34,8 @@ int main(int argc, char** argv) {
 	
 	int currentGen = 0;
 	chromosome_typ solution;
+
+	//the maze for these chromosomes to solve
 	int maze[10][10] = { {1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 						{1, 0, 0, 0, 1, 1, 1, 0, 0, 0},
 						{1, 1, 1, 1, 1,	0, 1, 1, 0, 0},
@@ -83,6 +87,7 @@ int main(int argc, char** argv) {
 	cout << endl;
 }
 
+//calculates fitness, fitness increases with number of correct movement decisions
 int CalcFitness(char* instructions, int (&maze)[10][10]) {
 	int x = 0, y = 0, fitness = 0;
 	char last = 'C';
@@ -113,6 +118,7 @@ int CalcFitness(char* instructions, int (&maze)[10][10]) {
 	return fitness;
 }
 
+//return true if the given chars represent opposite directions, e.g U and D or L and R
 bool opposite(char char1, char char2) {
 	if (abs(char1 - char2) == 6)
 		return true;
@@ -121,6 +127,7 @@ return true;
 return false;
 }
 
+//construct the initial random chromosomes
 void randomInstruct(char* instructions) {
 	for (int i = 0; i < INSTRUCT_LEN; i++) {
 		int num = (int)(RANDOM_NUM * 4);
@@ -142,6 +149,7 @@ void randomInstruct(char* instructions) {
 	}
 }
 
+//creates a random crossover point on the chromosomes, switching the genes at that point 
 void Crossover(chromosome_typ& chrome1, chromosome_typ& chrome2) {
 	if (RANDOM_NUM < CROSSOVER)
 	{
@@ -160,6 +168,7 @@ void Crossover(chromosome_typ& chrome1, chromosome_typ& chrome2) {
 	}
 }
 
+//randomly mutates the instructions
 void Mutate(chromosome_typ& chromo) {
 	for (int i = 0; i < INSTRUCT_LEN; i++)
 	{
@@ -200,7 +209,7 @@ void Mutate(chromosome_typ& chromo) {
 	}
 }
 
-
+//sorts the list of chromosomes by fitness
 void sortByFitness(chromosome_typ(&Population)[POP_SIZE]) {
 	int i, j;
 	chromosome_typ temp;
@@ -218,6 +227,7 @@ void sortByFitness(chromosome_typ(&Population)[POP_SIZE]) {
 	}
 }
 
+//creates a new generation of chromosomes 2 at a time
 void nextGen(chromosome_typ(&Population)[POP_SIZE]){
 	chromosome_typ tempPop[POP_SIZE];
 	
